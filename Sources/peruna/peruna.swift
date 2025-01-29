@@ -1,5 +1,3 @@
-// The Swift Programming Language
-// https://docs.swift.org/swift-book
 import Foundation
 import MetalKit
 #if canImport(PlaygroundSupport)
@@ -28,11 +26,11 @@ class MetalContext {
     }
 }
 
-@MainActor let metalContext = MetalContext()
+@MainActor internal let metalContext = MetalContext()
 
 @MainActor func setup( _ userSetupMethod: () -> Void) {
     #if canImport(PlaygroundSupport)
-    PlaygroundPage.current.liveView = ctx.view
+    PlaygroundPage.current.liveView = metalContext.view
     #endif
     
     userSetupMethod()
@@ -40,4 +38,14 @@ class MetalContext {
 
 func draw(_ userDrawMethod: () -> Void) {
     userDrawMethod()
+}
+
+
+
+func color(_ r: CGFloat, _ g: CGFloat, _ b: CGFloat, _ a: CGFloat = 255) -> MTLClearColor {
+    return MTLClearColor(red: r/255, green: g/255, blue: b/255, alpha: a/255)
+}
+
+func color(_ gray: CGFloat, _ a: CGFloat = 255) -> MTLClearColor {
+    return MTLClearColor(red: gray/255, green: gray/255, blue: gray/255, alpha: a/255)
 }
