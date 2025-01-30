@@ -1,3 +1,10 @@
+/// Peruna is a creative coding library for Swift that makes it easy to create visual and interactive art.
+///
+/// ## Overview
+/// Peruna provides a set of tools and utilities for artists and developers to express their creativity through code.
+/// Start with basic building blocks like colors and shapes, then combine them to create complex visual experiences.
+///
+
 import Foundation
 import MetalKit
 #if canImport(PlaygroundSupport)
@@ -41,11 +48,49 @@ func draw(_ userDrawMethod: () -> Void) {
 }
 
 
-
+/// Creates a metal clear color from RGB or grayscale values.
+///
+/// Use this function to create ``MTLClearColor`` instances with RGB values in the familiar 0-255 range
+/// instead of normalized 0-1 values.
+///
+/// You can create colors using either RGB values:
+/// ```swift
+/// let red = color(255, 0, 0)
+/// ```
+///
+/// Or using a single grayscale value:
+/// ```swift
+/// let gray = color(128)
+/// ```
+///
+/// - Parameters:
+///   - r: Red component (0-255)
+///   - g: Green component (0-255)
+///   - b: Blue component (0-255)
+///   - a: Alpha component (0-255), defaults to 255 (fully opaque)
+/// - Returns: An ``MTLClearColor`` instance with the specified color values
 func color(_ r: CGFloat, _ g: CGFloat, _ b: CGFloat, _ a: CGFloat = 255) -> MTLClearColor {
     return MTLClearColor(red: r/255, green: g/255, blue: b/255, alpha: a/255)
 }
 
+/// Creates a metal clear color from a grayscale value.
+///
+/// Use this function to create grayscale ``MTLClearColor`` instances where all RGB components
+/// have the same value.
+///
+/// ```swift
+/// let mediumGray = color(128)
+/// ```
+///
+/// - Parameters:
+///   - gray: Grayscale value (0-255)
+///   - a: Alpha component (0-255), defaults to 255 (fully opaque)
+/// - Returns: An ``MTLClearColor`` instance with the specified grayscale value
+///
 func color(_ gray: CGFloat, _ a: CGFloat = 255) -> MTLClearColor {
     return MTLClearColor(red: gray/255, green: gray/255, blue: gray/255, alpha: a/255)
+}
+
+struct CoolColor {
+    let coolColor = color(255, 255, 255)
 }
