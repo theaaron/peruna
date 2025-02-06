@@ -4,21 +4,21 @@
 import PackageDescription
 
 let package = Package(
-    name: "peruna",
+    name: "Peruna",
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "peruna",
-            targets: ["peruna"]),
+            name: "Peruna",
+            targets: ["Peruna"]),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "peruna"),
+            name: "Peruna"),
         .testTarget(
-            name: "perunaTests",
-            dependencies: ["peruna"]
+            name: "PerunaTests",
+            dependencies: ["Peruna"]
         ),
     ]
 )
