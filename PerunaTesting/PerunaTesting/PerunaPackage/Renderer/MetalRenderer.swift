@@ -6,32 +6,36 @@
 //
 import MetalKit
 
-public class MetalRenderer: PerunaRenderer {
-    
+public class MetalRenderer: NSObject, MTKViewDelegate {
+    let view: PerunaView
     let device: MTLDevice
     let commandQueue: MTLCommandQueue
-    let commandBuffer: MTLCommandBuffer
+    let vertexBuffer: MTLBuffer
     let pipelineState: MTLRenderPipelineState
+    let height: Float
+    let width: Float
+    
+    
     var backgroundColor = MTLClearColor(red: 53/255, green: 76/255, blue: 161/255, alpha: 1.0)
-    var fillColor = MTLClearColor(red: 204/255, green: 0.0, blue: 53/255, alpha: 1.0)
-    var strokeColor = MTLClearColor(red: 38/255, green: 38/255, blue: 38/255, alpha: 1.0)
+    
+//    var fillColor = MTLClearColor(red: 204/255, green: 0.0, blue: 53/255, alpha: 1.0)
+//    var strokeColor = MTLClearColor(red: 38/255, green: 38/255, blue: 38/255, alpha: 1.0)
     var noStroke = false
     var noFill = false
     var strokeWeight = 5.0
     
-    public init() {
+    init(view: PerunaView) {
+        self.view = view
+        self.width = Float(view.width)
+        self.height = Float(view.height)
         guard let metalDevice = MTLCreateSystemDefaultDevice() else {
             fatalError("GPU not supported")
         }
         self.device = metalDevice
-        guard let cmdQ = self.device.makeCommandQueue() else {
-            fatalError("Could not create Command Queue")
+        guard let cQ = device.makeCommandQueue() else {
+            fatalError("Could not create command queue")
         }
-        self.commandQueue = cmdQ
-        guard let cmdBuf = self.commandQueue.makeCommandBuffer() else {
-            fatalError("Could not create Command Buffer")
-        }
-        self.commandBuffer = cmdBuf
+        self.commandQueue = cQ
         
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         let library = metalDevice.makeDefaultLibrary()
@@ -42,18 +46,66 @@ public class MetalRenderer: PerunaRenderer {
         do {
             try pipelineState = metalDevice.makeRenderPipelineState(descriptor: pipelineDescriptor)
         } catch {
-            fatalError("Could not create Pipeline State")
+            fatalError("could not create pipeline state")
         }
         
         
         
-    }
-    
-    public func setup() {
+        let vertices = [
+            Vertex(position: [-1, -1, 0], color: [1, 0, 0, 1]),
+            Vertex(position: [0, 1, 0], color: [0, 1, 0, 1]),
+            Vertex(position: [1, -1, 0], color: [0, 0, 1, 1])
+        ]
+        
+        guard let vB = device.makeBuffer(bytes: vertices, length: vertices.count * MemoryLayout<Vertex>.stride, options: []) else {
+            fatalError("Could not create vertex buffer")
+        }
+        
+        self.vertexBuffer = vB
+        
+        
+        
+        super.init()
         
     }
     
-    public func draw() {
+    private func pixelToDNC(x: Float, y: Float, z: Float = 0, viewWidth: Float, viewHeight: Float) -> SIMD3<Float> {
+        let ndcX = Float((2.0 * x / viewWidth) - 1.0)
+        let ndcY = Float(1.0 - (2.0 * y / viewHeight))
+        let ndcZ = z ///Mark: Fix this for 3D
         
+        return SIMD3<Float>(ndcX, ndcY, ndcZ)
+    }
+    
+    public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+        
+    }
+    
+    public func draw(in view: MTKView) {
+        guard let drawable = view.currentDrawable else {
+            return
+        }
+        
+        let commandBuffer = commandQueue.makeCommandBuffer()
+        
+        guard let renderPassDescriptor = view.currentRenderPassDescriptor else {
+            fatalError("Could not create Render pass descriptor")
+        }
+        renderPassDescriptor.colorAttachments[0].clearColor = backgroundColor
+        renderPassDescriptor.colorAttachments[0].loadAction = .clear
+        renderPassDescriptor.colorAttachments[0].storeAction = .store
+        
+        let renderEncoder = commandBuffer?.makeRenderCommandEncoder(descriptor: renderPassDescriptor)
+        
+        //yay, draw shapes
+        
+        renderEncoder?.setRenderPipelineState(pipelineState)
+        renderEncoder?.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+        renderEncoder?.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
+        
+        renderEncoder?.endEncoding()
+        
+        commandBuffer?.present(drawable)
+        commandBuffer?.commit()
     }
 }
