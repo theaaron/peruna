@@ -7,6 +7,4 @@
 
 public protocol PShape {
     var vertices: [SIMD3<Float>] { get set }
-    var colors: [SIMD4<Float>] { get set }
-    func draw()
 }
