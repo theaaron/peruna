@@ -18,7 +18,7 @@ public class MetalRenderer: NSObject, MTKViewDelegate {
     
     var backgroundColor = MTLClearColor(red: 53/255, green: 76/255, blue: 161/255, alpha: 1.0)
     
-//    var fillColor = MTLClearColor(red: 204/255, green: 0.0, blue: 53/255, alpha: 1.0)
+    var fillColor = SIMD4<Float>(204/255, 0.0, 53/255, 1.0)
 //    var strokeColor = MTLClearColor(red: 38/255, green: 38/255, blue: 38/255, alpha: 1.0)
     var noStroke = false
     var noFill = false
@@ -49,12 +49,10 @@ public class MetalRenderer: NSObject, MTKViewDelegate {
             fatalError("could not create pipeline state")
         }
         
-        
-        
         let vertices = [
-            Vertex(position: [-1, -1, 0], color: [1, 0, 0, 1]),
-            Vertex(position: [0, 1, 0], color: [0, 1, 0, 1]),
-            Vertex(position: [1, -1, 0], color: [0, 0, 1, 1])
+            Vertex(position: MetalRenderer.pixelToDNC(x: 150, y: 0, viewWidth: width, viewHeight: height), color: fillColor),
+            Vertex(position: MetalRenderer.pixelToDNC(x: 75, y: 100, viewWidth: width, viewHeight: height), color: fillColor),
+            Vertex(position: MetalRenderer.pixelToDNC(x: 225, y: 100, viewWidth: width, viewHeight: height), color: fillColor)
         ]
         
         guard let vB = device.makeBuffer(bytes: vertices, length: vertices.count * MemoryLayout<Vertex>.stride, options: []) else {
@@ -69,7 +67,7 @@ public class MetalRenderer: NSObject, MTKViewDelegate {
         
     }
     
-    private func pixelToDNC(x: Float, y: Float, z: Float = 0, viewWidth: Float, viewHeight: Float) -> SIMD3<Float> {
+    public static func pixelToDNC(x: Float, y: Float, z: Float = 0, viewWidth: Float, viewHeight: Float) -> SIMD3<Float> {
         let ndcX = Float((2.0 * x / viewWidth) - 1.0)
         let ndcY = Float(1.0 - (2.0 * y / viewHeight))
         let ndcZ = z ///Mark: Fix this for 3D
