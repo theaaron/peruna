@@ -9,8 +9,8 @@ import MetalKit
 
 struct PerunaView: UIViewRepresentable {
     
-    var width: CGFloat = UIScreen.main.bounds.width
-    var height: CGFloat = UIScreen.main.bounds.height
+    @State public var width: CGFloat = UIScreen.main.bounds.width
+    @State public var height: CGFloat = UIScreen.main.bounds.height
     
     func makeCoordinator() -> MetalRenderer {
        MetalRenderer(view: self)
@@ -29,6 +29,8 @@ struct PerunaView: UIViewRepresentable {
         mtkView.device = metalDevice
         mtkView.framebufferOnly = false
         mtkView.drawableSize = mtkView.frame.size
+        width = mtkView.frame.width
+        height = mtkView.frame.height
         
         return mtkView
     }
