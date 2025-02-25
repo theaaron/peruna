@@ -5,6 +5,9 @@
 //  Created by aaron on 2/22/25.
 //
 
-protocol PShape {
-    var vertices: [SIMD3<Float>] { get set }
+public protocol PShape {
+    var x: Float { get set }
+    var y: Float { get set }
+    var width: Float { get set }
+    var height: Float { get set }
 }
