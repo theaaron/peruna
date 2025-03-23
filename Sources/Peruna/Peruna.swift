@@ -11,9 +11,10 @@ import MetalKit
 import PlaygroundSupport
 #endif
 
+@available(macOS 10.15, *)
 public class Peruna {
     
-    private let renderer: MetalRenderer
+    private let renderer: PerunaMetalRenderer
     
     public func rect(_ x: Float, _ y: Float, _ w: Float, _ h: Float) {
         
@@ -24,7 +25,7 @@ public class Peruna {
     }
     
     init() {
-        renderer = MetalRenderer()
+        renderer = PerunaMetalRenderer()
     }
 
 }

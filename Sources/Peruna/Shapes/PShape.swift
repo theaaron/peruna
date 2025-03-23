@@ -4,7 +4,8 @@
 //
 //  Created by aaron on 2/6/25.
 //
+import MetalKit
 
-public protocol PShape {
-    var vertices: [SIMD3<Float>] { get set }
+protocol PShape {
+    func draw(encoder: MTLRenderCommandEncoder)
 }
